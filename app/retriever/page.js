@@ -1,21 +1,27 @@
 // app/retriever/page.js
-import connectToDatabase from '../../lib/db';
+import fs from 'fs';
+import path from 'path';
 import RetrieverClient from './RetrieverClient';
-import AssetCategory from '../../models/AssetCategory';
-import AssetPath from '../../models/AssetPath';
+
+async function getManifestData() {
+  const manifestPath = path.join(process.cwd(), 'public', 'manifest.json');
+  const manifestData = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+  return manifestData;
+}
+
+export async function generateStaticParams() {
+  // Generate static paths if needed
+  return [];
+}
 
 async function Retriever() {
-  try {
-    await connectToDatabase();
+  const manifestData = await getManifestData();
 
-    // Fetch asset paths from the database using Mongoose
-    const assetPaths = await AssetPath.find().exec();
-
-    return <RetrieverClient assetPaths={assetPaths} />;
-  } catch (error) {
-    console.error('Error fetching asset paths:', error);
-    return <div>Error occurred while fetching asset paths.</div>;
-  }
+  return (
+    <div>
+      <RetrieverClient manifestData={manifestData} />
+    </div>
+  );
 }
 
 export default Retriever;
