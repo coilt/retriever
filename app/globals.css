@@ -2,11 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -28,6 +24,7 @@ justify-content: center;
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+    color: rgb(102, 137, 137);
 }
 
 @layer utilities {
@@ -41,8 +38,8 @@ main {
   justify-content: center;
   margin-left: 0;
   margin-right: 0;
-  min-width: 50%;
-  max-width: 70%;
+  min-width: 40%;
+  max-width: 50%;
   
 }
 
@@ -50,3 +47,13 @@ main {
 ::file-selector-button {
   display: none;
 }
+
+
+input{background-color: rgb(24, 34, 54);}
+
+.spacer {
+  height: 2%;
+}
+
+
+
