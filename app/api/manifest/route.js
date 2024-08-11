@@ -58,10 +58,12 @@ async function processManifest(manifest, searchTerm) {
 
   // 2. Collect all the entries linked to the asset
   const assetChunkId = asset.ChunkId;
-  const decimalChunkId = parseInt(assetChunkId, 16);
+  const assetDependencies = manifest.Dependencies.ChunkIDToDependencies[assetChunkId];
   console.log('Asset dependencies:', assetDependencies);
 
- 
+  // 3. Convert the ChunkID from hex to decimal
+  const decimalChunkId = parseInt(assetChunkId, 16);
+  console.log('Decimal ChunkID:', decimalChunkId);
 
   // 4. Recursively collect all the dependencies of the asset and its dependencies
   const allDependencies = new Set();
@@ -78,8 +80,9 @@ async function processManifest(manifest, searchTerm) {
   };
 
   allDependencies.forEach((chunkId) => {
-    processedManifest.Dependencies.ChunkIDToDependencies[chunkId] =
-      manifest.Dependencies.ChunkIDToDependencies[chunkId];
+    const hexChunkId = chunkId.toString(16);
+    processedManifest.Dependencies.ChunkIDToDependencies[hexChunkId] =
+      manifest.Dependencies.ChunkIDToDependencies[hexChunkId];
   });
 
   console.log('Processed manifest:', processedManifest);
