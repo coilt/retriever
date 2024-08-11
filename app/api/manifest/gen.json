@@ -1,0 +1,26 @@
+{
+  "Files": [
+    {
+      "Path": "AloneInTheDark/Content/ObsidianFox/Art/UI/Selection_Marker2_Far.uasset",
+      "ChunkId": "c9438d7cc6ca7cad00000002"
+    },
+    {
+      "Path": "/AloneInTheDark/Content/ObsidianFox/Core/Input/IA_Examine.uasset",
+      "ChunkId": "c6f037c1110baf2200000002"
+    }
+  ],
+
+  "Dependencies": {
+    "packageID": 390456402617300121,
+
+    "ChunkIDToDependencies": {
+      "14502590792113749165": {
+        "uncompressedSize": 2460,
+        "exportObjects": 1,
+        "requiredValueSomehow": 1,
+        "uniqueIndex": 43,
+        "dependencies": null
+      }
+    }
+  }
+}

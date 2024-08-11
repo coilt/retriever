@@ -12,13 +12,52 @@ export default function Home() {
   const handleManifestUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
+  
     reader.onload = (e) => {
-      const manifestContent = JSON.parse(e.target.result);
-      console.log('Parsed packageID:', manifestContent.Dependencies.packageID);
-      setManifest(manifestContent);
+      const manifestContent = e.target.result;
+  
+      // Extract packageID using the provided regular expression
+      const extractPackageID = (content) => {
+        const regex = /"packageID"\s*:\s*"?(\d+)"?/;
+        const match = content.match(regex);
+        return match ? match[1] : null;
+      };
+  
+      const packageID = extractPackageID(manifestContent);
+      console.log('Extracted packageID:', packageID);
+  
+      // Extract the manifest object using regular expressions
+      const extractManifestObject = (content) => {
+        const filesRegex = /"Files"\s*:\s*(\[[\s\S]*?\])/;
+        const packageIDRegex = /"packageID"\s*:\s*"?(\d+)"?/;
+        const chunkIDToDependenciesRegex = /"ChunkIDToDependencies"\s*:\s*(\{[\s\S]*?\})/;
+      
+        const filesMatch = content.match(filesRegex);
+        const packageIDMatch = content.match(packageIDRegex);
+        const chunkIDToDependenciesMatch = content.match(chunkIDToDependenciesRegex);
+      
+        const files = filesMatch ? JSON.parse(filesMatch[1]) : [];
+        const packageID = packageIDMatch ? packageIDMatch[1] : null;
+        const chunkIDToDependencies = chunkIDToDependenciesMatch ? chunkIDToDependenciesMatch[1] : '{}';
+      
+        return {
+          Files: files,
+          Dependencies: {
+            packageID: packageID,
+            ChunkIDToDependencies: chunkIDToDependencies,
+          },
+        };
+      };
+      
+      
+  
+      const extractedManifest = extractManifestObject(manifestContent);
+      setManifest(extractedManifest);
     };
+  
     reader.readAsText(file);
   };
+  
 
   const handleSearch = async () => {
     console.log('Sending request with manifest:', manifest);
