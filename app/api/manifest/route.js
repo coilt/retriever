@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import destr from 'destr';
 import path from 'path';
 
 export async function POST(request) {
@@ -29,56 +29,73 @@ export async function POST(request) {
 }
 
 async function processManifest(manifest, searchTerm) {
-  console.log('Processing manifest...');
-  
+  console.log('Processing manifest with searchTerm:', searchTerm);
+
   // 1. Search for the asset by its title
   const asset = manifest.Files.find((file) => {
     const title = path.basename(file.Path);
-    console.log('Checking asset:', title);
     return title === searchTerm;
   });
 
   if (!asset) {
-    console.error('Asset not found');
     throw new Error('Asset not found');
   }
 
   console.log('Found asset:', asset);
 
-  // 2. Extract packageID using the provided regular expression
-  const extractPackageID = (content) => {
-    const regex = /"packageID"\s*:\s*"?(\d+)"?/;
-    const match = content.match(regex);
-    return match ? match[1] : null;
-  };
+  // 2. Collect all the entries linked to the asset
+  const assetChunkId = asset.ChunkId.slice(0, 16);
+  const decimalChunkId = BigInt(`0x${assetChunkId}`).toString();
+  const assetDependencies = manifest.Dependencies.ChunkIDToDependencies[decimalChunkId];
 
-  const packageID = extractPackageID(JSON.stringify(manifest));
+  console.log('Asset decimal chunk ID:', decimalChunkId);
+  console.log('Asset dependencies:', assetDependencies);
 
-  if (!packageID) {
-    console.error('packageID not found');
-    throw new Error('packageID not found');
-  }
+  // 3. Recursively collect all the dependencies of the asset and its dependencies
+  const allDependencies = new Set();
+  collectDependencies(decimalChunkId, manifest.Dependencies.ChunkIDToDependencies, allDependencies);
 
-  console.log('Extracted packageID:', packageID);
-
-  // 3. Convert the first 16 characters of the asset's ChunkId from hexadecimal to base-10
-  const chunkIdHex = asset.ChunkId.slice(0, 16);
-  const chunkIdBase10 = parseInt(chunkIdHex, 16);
-
-  console.log('Converted ChunkId:', chunkIdHex, '->', chunkIdBase10);
+  console.log('All dependencies:', allDependencies);
 
   // 4. Build a new manifest containing the fetched asset and its dependencies
   const processedManifest = {
     Files: [asset],
     Dependencies: {
-      packageID: packageID,
-      ChunkIDToDependencies: {
-        [chunkIdBase10]: manifest.Dependencies.ChunkIDToDependencies[asset.ChunkId],
-      },
+      packageID: manifest.Dependencies.packageID,
+      ChunkIDToDependencies: {},
     },
   };
+
+  allDependencies.forEach((decimalChunkId) => {
+    processedManifest.Dependencies.ChunkIDToDependencies[decimalChunkId] =
+      manifest.Dependencies.ChunkIDToDependencies[decimalChunkId];
+  });
 
   console.log('Processed manifest:', processedManifest);
 
   return processedManifest;
+}
+
+function collectDependencies(chunkId, chunkIdToDependencies, allDependencies) {
+  if (allDependencies.has(chunkId)) {
+    console.log('Dependency already processed:', chunkId);
+    return;
+  }
+
+  allDependencies.add(chunkId);
+  console.log('Processing dependency:', chunkId);
+
+  const chunkIdData = chunkIdToDependencies[chunkId];
+  console.log('Chunk ID data:', chunkIdData);
+
+  if (chunkIdData) {
+    const { dependencies } = chunkIdData;
+    console.log('Dependencies:', dependencies);
+
+    if (dependencies) {
+      dependencies.forEach((dependencyChunkId) => {
+        collectDependencies(dependencyChunkId.toString(), chunkIdToDependencies, allDependencies);
+      });
+    }
+  }
 }

@@ -1,5 +1,5 @@
 'use client'
-
+import destr from 'destr';
 import { useState } from 'react'
 import axios from 'axios'
 import { MagnifyingGlassIcon, UsersIcon } from '@heroicons/react/20/solid'
@@ -36,9 +36,9 @@ export default function Home() {
         const packageIDMatch = content.match(packageIDRegex);
         const chunkIDToDependenciesMatch = content.match(chunkIDToDependenciesRegex);
       
-        const files = filesMatch ? JSON.parse(filesMatch[1]) : [];
+        const files = filesMatch ? destr(filesMatch[1]) : [];
         const packageID = packageIDMatch ? packageIDMatch[1] : null;
-        const chunkIDToDependencies = chunkIDToDependenciesMatch ? chunkIDToDependenciesMatch[1] : '{}';
+        const chunkIDToDependencies = chunkIDToDependenciesMatch ? destr(chunkIDToDependenciesMatch[1]) : {};
       
         return {
           Files: files,
