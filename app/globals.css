@@ -17,6 +17,10 @@
 }
 
 body {
+display: flex;
+justify-content: center;
+  margin: 0;
+  padding: 0;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -30,4 +34,14 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 40%;
+  max-width: 60%;
+  
 }
