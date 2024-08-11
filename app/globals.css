@@ -41,7 +41,12 @@ main {
   justify-content: center;
   margin-left: 0;
   margin-right: 0;
-  min-width: 40%;
-  max-width: 60%;
+  min-width: 50%;
+  max-width: 70%;
   
+}
+
+
+::file-selector-button {
+  display: none;
 }

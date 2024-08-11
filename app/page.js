@@ -73,19 +73,22 @@ export default function Home() {
         <div>
           <label
             htmlFor='email'
-            className='block text-sm font-medium leading-6 text-gray-300'
+            className='block text-sm font-medium leading-6 text-slate-600'
           >
-            Search assets
+            Search Unreal Engine assets
           </label>
-          <div className='mt-2 flex rounded-md shadow-sm'>
+          <div className='mt-2 flex  shadow-sm'>
             <div className='relative flex flex-grow items-stretch focus-within:z-10'>
-              <div className='absolute inset-y-0 left-0 flex items-center pl-3'></div>
+              
+            
               <input
                 type='file'
+              
                 accept='.json'
                 onChange={handleManifestUpload}
-                className='block w-full rounded-l-md border-0 py-1.5 pl-8 text-gray-900 ring-1 ring-inset ring-indigo-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                className='w-24 relative -ml-px inline-flex items-center gap-x-1.5 rounded-l-md px-3 py-2 text-sm font-semibold text-slate-400 ring-1 ring-inset ring-slate-800 hover:bg-slate-900'
               />
+
             </div>
             <input
               id='search'
@@ -94,16 +97,16 @@ export default function Home() {
               aria-describedby='email-optional'
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className='block w-full rounded-l-md border-0 py-1.5 pl-8 text-gray-900 ring-1 ring-inset ring-indigo-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              className='block w-full border-0 py-1.5 pl-8 text-slate-900 ring-1 ring-inset ring-indigo-600 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
             />
             <button
               type='button'
-              className='relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-400 ring-1 ring-inset ring-gray-800 hover:bg-gray-900'
+              className='relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-slate-400 ring-1 ring-inset ring-slate-800 hover:bg-slate-900'
               onClick={handleSearch}
             >
               <MagnifyingGlassIcon
                 aria-hidden='true'
-                className='-ml-0.5 h-5 w-5 text-gray-400'
+                className='-ml-0.5 h-5 w-5 text-slate-400'
               />
               Search
             </button>

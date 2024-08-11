@@ -1,61 +1,94 @@
-import destr from 'destr';
-import path from 'path';
+import destr from 'destr'
+import path from 'path'
 
 export async function POST(request) {
   try {
-    const { manifest, searchTerm } = await request.json();
-    console.log('Received manifest:', manifest);
-    console.log('Received searchTerm:', searchTerm);
-   
+    const { manifest, searchTerm } = await request.json()
+    console.log('Received manifest:', manifest)
+    console.log('Received searchTerm:', searchTerm)
+
     // Process the manifest and search for the specified asset
-    const result = await processManifest(manifest, searchTerm);
-    console.log('Processed manifest:', result);
-   
+    const result = await processManifest(manifest, searchTerm)
+    console.log('Processed manifest:', result)
+
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    })
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error('Error processing request:', error)
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    })
   }
 }
 
 async function processManifest(manifest, searchTerm) {
-  console.log('Processing manifest with searchTerm:', searchTerm);
+  const log = []
+  log.push(`Processing manifest with searchTerm: ${searchTerm}`)
+  log.push(`Manifest: ${JSON.stringify(manifest)}`)
 
   // 1. Search for the asset by its title
   const asset = manifest.Files.find((file) => {
-    const title = path.basename(file.Path);
-    return title === searchTerm;
-  });
+    const title = path.basename(file.Path)
+    return title === searchTerm
+  })
 
   if (!asset) {
-    throw new Error('Asset not found');
+    throw new Error('Asset not found')
   }
 
-  console.log('Found asset:', asset);
+  log.push(`Found asset: ${JSON.stringify(asset)}`)
 
   // 2. Collect all the entries linked to the asset
-  const assetChunkId = asset.ChunkId.slice(0, 16);
-  const decimalChunkId = BigInt(`0x${assetChunkId}`).toString();
-  const assetDependencies = manifest.Dependencies.ChunkIDToDependencies[decimalChunkId];
+  const assetChunkId = asset.ChunkId.slice(0, 16)
+  const decimalChunkId = BigInt(`0x${assetChunkId}`).toString()
 
-  console.log('Asset decimal chunk ID:', decimalChunkId);
-  console.log('Asset dependencies:', assetDependencies);
+  log.push(`decimalChunkId value: ${decimalChunkId}`)
+  log.push(`Searching for decimalChunkId: ${decimalChunkId}`)
+
+  // Check if decimalChunkId is a string
+  if (typeof decimalChunkId === 'string') {
+    log.push(`decimalChunkId is a string: ${decimalChunkId}`)
+  } else {
+    log.push(`decimalChunkId is not a string: ${decimalChunkId}`)
+  }
+  
+  const assetDependencies = manifest.Dependencies.ChunkIDToDependencies[`"${decimalChunkId}"`];
+
+  // Add the log statement here
+  for (const chunkId in manifest.Dependencies.ChunkIDToDependencies) {
+    log.push(`Type of chunkId: ${typeof chunkId}, Value: ${chunkId}`);
+  }
+
+  log.push(`Asset dependencies: ${JSON.stringify(assetDependencies)}`);
+
+  if (assetDependencies) {
+    log.push(`Found matching chunkId: ${decimalChunkId}`)
+    log.push(`Asset dependencies: ${JSON.stringify(assetDependencies)}`)
+  } else {
+    log.push(
+      `No matching dependencies found for decimalChunkId: ${decimalChunkId}`
+    )
+  }
 
   // 3. Recursively collect all the dependencies of the asset and its dependencies
-  const allDependencies = new Set();
-  collectDependencies(decimalChunkId, manifest.Dependencies.ChunkIDToDependencies, allDependencies);
+  const allDependencies = new Set()
+  if (assetDependencies) {
+    collectDependencies(
+      decimalChunkId,
+      manifest.Dependencies.ChunkIDToDependencies,
+      allDependencies,
+      log
+    )
+  }
 
-  console.log('All dependencies:', allDependencies);
+  log.push(`All dependencies: ${JSON.stringify(Array.from(allDependencies))}`)
 
   // 4. Build a new manifest containing the fetched asset and its dependencies
   const processedManifest = {
@@ -64,38 +97,24 @@ async function processManifest(manifest, searchTerm) {
       packageID: manifest.Dependencies.packageID,
       ChunkIDToDependencies: {},
     },
-  };
+  }
 
   allDependencies.forEach((decimalChunkId) => {
-    processedManifest.Dependencies.ChunkIDToDependencies[decimalChunkId] =
-      manifest.Dependencies.ChunkIDToDependencies[decimalChunkId];
-  });
-
-  console.log('Processed manifest:', processedManifest);
-
-  return processedManifest;
-}
-
-function collectDependencies(chunkId, chunkIdToDependencies, allDependencies) {
-  if (allDependencies.has(chunkId)) {
-    console.log('Dependency already processed:', chunkId);
-    return;
-  }
-
-  allDependencies.add(chunkId);
-  console.log('Processing dependency:', chunkId);
-
-  const chunkIdData = chunkIdToDependencies[chunkId];
-  console.log('Chunk ID data:', chunkIdData);
-
-  if (chunkIdData) {
-    const { dependencies } = chunkIdData;
-    console.log('Dependencies:', dependencies);
-
-    if (dependencies) {
-      dependencies.forEach((dependencyChunkId) => {
-        collectDependencies(dependencyChunkId.toString(), chunkIdToDependencies, allDependencies);
-      });
+    const chunkIdData =
+      manifest.Dependencies.ChunkIDToDependencies[decimalChunkId]
+    if (chunkIdData) {
+      processedManifest.Dependencies.ChunkIDToDependencies[decimalChunkId] =
+        chunkIdData
     }
+  })
+
+  // Add the asset's chunk ID and its data to the processed manifest if available
+  if (assetDependencies) {
+    processedManifest.Dependencies.ChunkIDToDependencies[decimalChunkId] =
+      assetDependencies
   }
+
+  log.push(`Processed manifest: ${JSON.stringify(processedManifest)}`)
+
+  return { processedManifest, log }
 }
