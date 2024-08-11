@@ -13,21 +13,20 @@ export default function Home() {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
-      const manifestContent = JSON.parse(e.target.result, (key, value) => {
-        if (key === 'packageID') {
-          return value.toString();
-        }
-        return value;
-      });
+      const manifestContent = JSON.parse(e.target.result);
+      console.log('Parsed packageID:', manifestContent.Dependencies.packageID);
       setManifest(manifestContent);
     };
     reader.readAsText(file);
   };
 
   const handleSearch = async () => {
-    const response = await axios.post('/api/manifest', { manifest, searchTerm })
-    setProcessedManifest(response.data)
-  }
+    console.log('Sending request with manifest:', manifest);
+    console.log('Sending request with searchTerm:', searchTerm);
+    const response = await axios.post('/api/manifest', { manifest, searchTerm });
+    console.log('Response from server:', response.data);
+    setProcessedManifest(response.data);
+  };
 
   return (
     <main>
