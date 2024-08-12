@@ -1,25 +1,30 @@
 {
   "Files": [
     {
-      "Path": "AloneInTheDark/Content/ObsidianFox/Art/UI/Selection_Marker2_Far.uasset",
-      "ChunkId": "c9438d7cc6ca7cad00000002"
-    },
-    {
-      "Path": "/AloneInTheDark/Content/ObsidianFox/Core/Input/IA_Examine.uasset",
-      "ChunkId": "c6f037c1110baf2200000002"
-    }
+      "Path": "/AloneInTheDark/Content/ObsidianFox/UI/WBP_InteractionIcon.uasset",
+      "ChunkId": "909ecad9f0bc1de900000002"
+    } 
+    
   ],
-
   "Dependencies": {
-    "packageID": 390456402617300121,
-
+    "packageID": 10437857082156768155,
     "ChunkIDToDependencies": {
-      "14502590792113749165": {
-        "uncompressedSize": 2460,
-        "exportObjects": 1,
+      "10420989625177480681": {
+        "uncompressedSize": 67801,
+        "exportObjects": 67,
         "requiredValueSomehow": 1,
-        "uniqueIndex": 43,
-        "dependencies": null
+        "uniqueIndex": 39571,
+        "dependencies": [
+          4891739575209572795,
+          11677434357924029408,
+          135147453090835782,
+          13864862980519096347,
+          14502590792113749165,
+          14335018916274482978,
+          1960018432933153809,
+          2732630267830973113,
+          2985053892167729550
+        ]
       }
     }
   }

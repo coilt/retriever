@@ -1,3 +1,0 @@
-      {processedManifest && (
-  <pre>{JSON.stringify(processedManifest, null, 2)}</pre>
-        </div>

@@ -1,4 +1,3 @@
-import destr from 'destr'
 import path from 'path'
 
 export async function POST(request) {
@@ -76,6 +75,24 @@ async function processManifest(manifest, searchTerm) {
       `No matching dependencies found for decimalChunkId: ${decimalChunkId}`
     )
   }
+
+
+  function collectDependencies(chunkId, chunkIdToDependencies, allDependencies, log) {
+    if (allDependencies.has(chunkId)) {
+      return;
+    }
+  
+    allDependencies.add(chunkId);
+  
+    const dependencies = chunkIdToDependencies[chunkId];
+    if (dependencies && dependencies.dependencies) {
+      for (const dependencyId of dependencies.dependencies) {
+        collectDependencies(dependencyId.toString(), chunkIdToDependencies, allDependencies, log);
+      }
+    }
+  }
+
+
 
   // 3. Recursively collect all the dependencies of the asset and its dependencies
   const allDependencies = new Set()
