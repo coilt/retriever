@@ -2,4 +2,4 @@ This is a [Next.js](https://nextjs.org/) web app for retrieving JSON data from a
 
 Built using [axios](https://github.com/axios/axios) and [destr](https://github.com/unjs/destr) as JSON.parse alternative.
 
-Tested on manifests from UE 4.27
+Tested on manifests for UE 4.27
