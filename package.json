@@ -16,7 +16,7 @@
     "fs": "0.0.1-security",
     "mongodb": "6.8.0",
     "mongoose": "^8.5.2",
-    "next": "^15.0.8",
+    "next": ">=15.5.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "postcss": "^8.5.12"
