@@ -111,11 +111,10 @@ export default function Home() {
           </div>
         </div>
         <div className='spacer'></div>
-        <div className='output bg-gray-950 p-8 rounded-xl' >
-
-        {processedManifest && (
-          <pre>{JSON.stringify(processedManifest, null, 2)}</pre>
-        )}
+        <div className='output bg-gray-950 p-8 rounded-xl'>
+          {processedManifest && (
+            <pre>{JSON.stringify(processedManifest, null, 2)}</pre>
+          )}
         </div>
       </div>
     </main>
