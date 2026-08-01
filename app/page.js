@@ -96,10 +96,11 @@ export default function Home () {
             </button>
           </div>
         </div>
-        <div className="spacer"></div>
-        <div className="output bg-gray-950 p-8 rounded-xl">
-
-          <JSONTree data={processedManifest} hideRoot shouldExpandNodeInitially={() => true}/>
+        <div className='spacer'></div>
+        <div className='output bg-gray-950 p-8 rounded-xl'>
+          {processedManifest && (
+            <pre>{JSON.stringify(processedManifest, null, 2)}</pre>
+          )}
         </div>
       </div>
     </main>

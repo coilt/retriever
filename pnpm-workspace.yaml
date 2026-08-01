@@ -1,0 +1,8 @@
+allowBuilds:
+  sharp: set this to true or false
+
+overrides:
+  "@humanwhocodes/config-array": "npm:@eslint/config-array@latest"
+  "glob@7.2.3": "npm:glob@latest"
+  "rimraf@3.0.2": "npm:rimraf@latest"
+  minimatch: ">=9.0.7"
